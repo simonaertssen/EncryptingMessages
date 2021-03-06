@@ -1,13 +1,15 @@
-// server.h
 #ifndef SERVER_H // include guard
 #define SERVER_H
 
-class Server {
+#include "simplesocket.h"
+
+
+class Server : public SimpleSocket{
   private:
 
   public:
-    Server(int year, int month, int day);
-
+    Server(int socketId);
+    ~Server();
 };
 
 
