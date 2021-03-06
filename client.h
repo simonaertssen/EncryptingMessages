@@ -6,7 +6,7 @@
 
 class Client : public SimpleSocket{
   public:
-    Client(int socketId);
+    Client();
     ~Client();
 };
 

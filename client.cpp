@@ -1,7 +1,7 @@
 #include <iostream>
 #include "client.h"
 
-Client::Client(int socketId) : SimpleSocket(0){
+Client::Client() : SimpleSocket(){
   std::cout << "Creating Client..." << std::endl;
 }
 

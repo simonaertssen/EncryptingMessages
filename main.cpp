@@ -6,8 +6,8 @@
 
 int main(int argc, char *argv[]){
   std::cout << "Creating objects..." << std::endl;
-  Server* server = new Server(1);
-  Client* client = new Client(2);
+  Server* server = new Server();
+  Client* client = new Client();
 
   std::cout << "Deleting objects..." << std::endl;
   delete server;
