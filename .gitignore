@@ -1,3 +1,6 @@
+# No mac files:
+*.DS_Store
+
 # Prerequisites
 *.d
 
