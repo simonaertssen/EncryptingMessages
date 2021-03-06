@@ -6,11 +6,10 @@ class SimpleSocket {
   private:
     int socketId;
   protected:
+    SimpleSocket();
     SimpleSocket(int socketId);
-    int getSocketId() const {return socketId;}
   public:
     ~SimpleSocket();
-    void close();
 };
 
 #endif /* SOCKET_H */

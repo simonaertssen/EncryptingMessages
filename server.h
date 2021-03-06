@@ -5,8 +5,6 @@
 
 
 class Server : public SimpleSocket{
-  private:
-
   public:
     Server(int socketId);
     ~Server();
