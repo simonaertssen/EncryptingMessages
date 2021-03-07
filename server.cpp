@@ -1,3 +1,4 @@
+// g++ -std=c++11 -o server.o server.cpp simplesocket.cpp && ./server.o
 #include <iostream>
 #include "server.h"
 #include <unistd.h>
@@ -9,9 +10,9 @@ Server::Server() : SimpleSocket(){
   Address.sin_addr.s_addr = INADDR_ANY;
   Address.sin_port = htons(PORT);
   AddressLength = sizeof(Address);
-  // bind(FileDescriptor, (struct sockaddr*)&Address, AddressLength);
-  // listen(FileDescriptor, MAX_CONNECTIONS);
-  // ListenToID = accept(FileDescriptor, (struct sockaddr*)&Address, (socklen_t*)&AddressLength);
+  bind(FileDescriptor, (struct sockaddr*)&Address, AddressLength);
+  listen(FileDescriptor, MAX_CONNECTIONS);
+  ListenToID = accept(FileDescriptor, (struct sockaddr*)&Address, (socklen_t*)&AddressLength);
   ReadContinuously();
 }
 
@@ -21,13 +22,17 @@ void Server::ReadContinuously(){
   double MAX_TIME = 0.01;
   std::cout << "start_time = " << start_time << std::endl;
   while(((now - start_time)/(double)CLOCKS_PER_SEC) < MAX_TIME) {
-    // read(ListenToID, MessageBuffer, BUFFER_SIZE);
-    std::cout << "diff = " << ((now - start_time)/(double)CLOCKS_PER_SEC) << std::endl;
+    read(ListenToID, MessageBuffer, BUFFER_SIZE);
     now = std::clock();
-    // Wait
   }
 }
 
 Server::~Server(){
   std::cout << "Destroying Server..." << std::endl;
+}
+
+
+int main(int argc, char *argv[]){
+  Server* server = new Server();
+  delete server;
 }
