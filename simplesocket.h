@@ -6,6 +6,7 @@
 
 #define BUFFER_SIZE_CONSTANT 1024
 
+
 class SimpleSocket {
   // A base class for the socket operations, not to be used directly.
   private:
