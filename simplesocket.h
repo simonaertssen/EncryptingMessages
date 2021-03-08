@@ -12,7 +12,7 @@ class SimpleSocket {
   private:
 
   protected:
-    int Id;
+    int err;
     int FileDescriptor;
     int PORT = 8080;
     int OptionValue = 1;
