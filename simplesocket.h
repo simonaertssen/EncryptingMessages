@@ -27,7 +27,6 @@ class SimpleSocket {
     char MessageBuffer[BUFFER_SIZE_CONSTANT] = {0};
     SimpleSocket();
   public:
-    void err(const std::string msg, int errcode);
     virtual ~SimpleSocket();
 };
 
