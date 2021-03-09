@@ -4,6 +4,16 @@
 #include "simplesocket.h"
 
 
+int communicate_error(int error_code, const char *file, int line){
+  int SUCCESS = 0;
+	if (error_code != SUCCESS){
+    std::cout << "E: code " << error_code << " in file " << file << ", line " << line << std::endl;
+    exit(1);
+  }
+  return error_code;
+}
+
+
 SimpleSocket::SimpleSocket(){
   try {
     FD = socket(AF_UNIX, SOCK_STREAM, 0);
