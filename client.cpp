@@ -11,8 +11,7 @@ Client::Client() : SimpleSocket(){
   std::cout << "Made connection..." << std::endl;
   char const *message = "Hello from client";
   send(FD, message, strlen(message), 0);
-  message
-   = "This is a good message service...";
+  message = "This is a good message service...";
   send(FD, message, strlen(message), 0);
   std::cout << "Message sent..." << std::endl;
 }

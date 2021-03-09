@@ -7,19 +7,11 @@
 
 Server::Server() : SimpleSocket(){
   // Address.sin_addr.s_addr = INADDR_ANY;
-  try {
-    e = bind(FD, (struct sockaddr*)&Address, AddressLength);
-    if (e < 0) throw "E binding server...";
-
-    e = listen(FD, MAX_CONNECTIONS);
-    if (e < 0) throw "E listening from server...";
-
-    ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength);
-    if (ListenToFD < 0) throw "ERROR accepting from server...";
-
-  } catch (const char* e) {
-    std::cerr << e << std::endl;
-  }
+  CHECK(bind(FD, (struct sockaddr*)&Address, AddressLength));
+  CHECK(listen(FD, MAX_CONNECTIONS));
+  ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength);
+  CHECK(ListenToFD);
+  
   ReadContinuously();
 }
 
