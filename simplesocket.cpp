@@ -21,7 +21,6 @@ SimpleSocket::SimpleSocket(){
     Address.sin_family = AF_INET;
     Address.sin_port = htons(PORT);
     AddressLength = sizeof(Address);
-    AddressLength = sizeof(Address);
   } catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;
   }

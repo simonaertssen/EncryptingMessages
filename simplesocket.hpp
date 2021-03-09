@@ -23,8 +23,6 @@ class SimpleSocket {
     // struct sockaddr_in Address;
     struct sockaddr_in Address;
     int AddressLength;
-    int BUFFER_SIZE = BUFFER_SIZE_CONSTANT;
-    char MessageBuffer[BUFFER_SIZE_CONSTANT] = {0};
     SimpleSocket();
   public:
     virtual ~SimpleSocket();
