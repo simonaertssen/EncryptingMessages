@@ -21,7 +21,7 @@ class SimpleSocket {
     int PORT = 8080;
     int OptionValue = 1;
     // struct sockaddr_in Address;
-    struct sockaddr_un Address;
+    struct sockaddr_in Address;
     int AddressLength;
     int BUFFER_SIZE = BUFFER_SIZE_CONSTANT;
     char MessageBuffer[BUFFER_SIZE_CONSTANT] = {0};
