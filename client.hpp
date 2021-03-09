@@ -1,7 +1,7 @@
 #ifndef CLIENT_H // include guard
 #define CLIENT_H
 
-#include "simplesocket.h"
+#include "simplesocket.hpp"
 
 
 class Client : public SimpleSocket{

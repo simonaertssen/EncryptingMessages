@@ -1,7 +1,7 @@
 #include <iostream>  // printing
 #include <unistd.h>  // close()
 
-#include "simplesocket.h"
+#include "simplesocket.hpp"
 
 
 int communicate_error(int error_code, const char *file, int line){
@@ -24,7 +24,11 @@ SimpleSocket::SimpleSocket(){
     // AddressLength = sizeof(Address);
     Address.sun_family = AF_UNIX;
     // strncpy(Address.sun_path, "socket", sizeof(Address.sun_path)-1);
+    bzero(&Address, sizeof(serv_addr));
+    Address.sun_family = AF_UNIX;
+    strcpy(Address.sun_path, socket_path_.c_str());
     AddressLength = sizeof(Address);
+
   } catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;
   }

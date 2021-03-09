@@ -1,8 +1,9 @@
 // g++ -std=c++11 -o server.o simplesocket.cpp server.cpp && ./server.o
 #include <iostream>
-#include "server.h"
 #include <unistd.h>
 #include <ctime>
+
+#include "server.hpp"
 
 
 Server::Server() : SimpleSocket(){
@@ -11,7 +12,7 @@ Server::Server() : SimpleSocket(){
   CHECK(listen(FD, MAX_CONNECTIONS));
   ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength);
   CHECK(ListenToFD);
-  
+
   ReadContinuously();
 }
 

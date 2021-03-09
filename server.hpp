@@ -1,7 +1,7 @@
 #ifndef SERVER_H // include guard
 #define SERVER_H
 
-#include "simplesocket.h"
+#include "simplesocket.hpp"
 
 
 class Server : public SimpleSocket{
