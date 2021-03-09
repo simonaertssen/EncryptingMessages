@@ -20,15 +20,11 @@ Server::Server() : SimpleSocket(){
 }
 
 void Server::ReadContinuously(){
-  clock_t start_time = clock(), now = clock();
-  double MAX_TIME = 10.0;
   int bytes_read;
   try {
-    // while(((now - start_time)/(double)CLOCKS_PER_SEC) < MAX_TIME) {
-    while((bytes_read = read(ListenToFD, MessageBuffer, BUFFER_SIZE)) > 0) {
-      now = clock();
+      while ((bytes_read = read(ListenToFD, MessageBuffer, BUFFER_SIZE)) > 0) {
       MessageBuffer[bytes_read] = '\0';
-      std::cout << (now - start_time)/(double)CLOCKS_PER_SEC << " Message received: " << MessageBuffer << std::endl;
+      std::cout << "Message received: " << MessageBuffer << std::endl;
       MessageBuffer[0] = '\0';
     }
   } catch (const std::runtime_error& e) {
