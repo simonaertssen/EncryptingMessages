@@ -1,6 +1,5 @@
 #include <iostream>
 #include <unistd.h>
-#include <pthread.h>
 #include <sys/socket.h>
 
 #include "TCPClient.hpp"
@@ -33,39 +32,49 @@ TCPClient::TCPClient(char *IP, int PORT) {
     Address.sin_port = htons(PORT);
     AddressLength = sizeof(Address);
 
-    pthread_t startup_thread;
+    // connectSafely();
+    // pthread_t startup_thread;
     // e = pthread_create(&startup_thread, NULL, TCPClient::connectSafely, NULL);
 }
 
 
-void TCPClient::connect_or_bind() {
-    throw std::runtime_error("connect_or_bind is not implemented.");
+char *TCPClient::myName() {
+    return typeid(this).name();
 }
+
+
+// void TCPClient::connect_or_bind() {
+//     throw std::runtime_error("connect_or_bind is not implemented.");
+// }
+
+
+// void TCPClient::connectSafely() {
+//     int connected = 0;
+//     try {
+//         connect_or_bind();
+//         connected = 1;
+//         std::cout << name << " is safely connected" << std::endl;
+//     } catch (const std::runtime_error& e) {
+//       std::cout << e.what() << std::endl;
+//     }
+//
+//     if (connected == 0) {
+//         shutdownSafely();
+//     }
+// }
 
 
 void TCPClient::releaseDependencies() {
     // If not overriden then don't do anything
-    int t = 0;
-}
-
-void TCPClient::connectSafely() {
-    int connected = 0;
-    try {
-        connect_or_bind();
-        connected = 1;
-    } catch (const std::runtime_error& e) {
-      std::cout << e.what() << std::endl;
-    }
-
-    if (connected == 0) {
-        delete this;
-    }
 }
 
 
-TCPClient::~TCPClient(){
-    std::cout << "Calling TCPClient destructor" << std::endl;
+void TCPClient::shutdownSafely() {
+    std::cout << name << " shutting down safely" << std::endl;
     releaseDependencies();
     shutdown(FD, SHUT_RDWR);
     close(FD);
+}
+
+TCPClient::~TCPClient(){
 }

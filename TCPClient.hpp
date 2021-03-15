@@ -13,19 +13,25 @@ int communicate_error(int error_code, const char *file, int line);
 
 class TCPClient {
   // A base class for the socket operations, not to be used directly.
-  private:
+    private:
 
-  protected:
-    int e;
-    int FD;
-    struct sockaddr_in Address;
-    int AddressLength;
+    protected:
+        int e;
+        int FD;
+        struct sockaddr_in Address;
+        int AddressLength;
 
-  public:
-      TCPClient(char *IP, int PORT);
-      virtual void connect_or_bind(void);
-      virtual void releaseDependencies(void);
-      void connectSafely(void);
+
+
+    public:
+        TCPClient(char *IP, int PORT);
+        char *myName();
+        // void connectSafely();
+        // virtual void connect_or_bind();
+        virtual void releaseDependencies();
+        void shutdownSafely();
+
+
       virtual ~TCPClient();
 };
 

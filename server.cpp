@@ -8,18 +8,33 @@
 
 Server::Server(char *IP, int PORT) : TCPClient(char *IP, int PORT){
   Address.sin_addr.s_addr = INADDR_ANY;
-  CHECK(bind(FD, (struct sockaddr*)&Address, AddressLength));
-  CHECK(listen(FD, MAX_CONNECTIONS));
-  try {
-    if ((ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength)) < 0)
-      throw std::runtime_error("Connection was not accepted.");
-  } catch (const std::runtime_error& e) {
-    std::cout << e.what() << std::endl;
-  }
-  ReadContinuously();
+  connectSafely()
+  readContinuously();
 }
 
-void Server::ReadContinuously(){
+void TCPClient::connectSafely() {
+    int connected = 0;
+    try {
+        CHECK(bind(FD, (struct sockaddr*)&Address, AddressLength));
+        CHECK(listen(FD, MAX_CONNECTIONS));
+        try {
+          if ((ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength)) < 0)
+            throw std::runtime_error("Connection was not accepted.");
+        } catch (const std::runtime_error& e) {
+          std::cout << e.what() << std::endl;
+        }
+        connected = 1;
+        std::cout << name << " is safely connected" << std::endl;
+    } catch (const std::runtime_error& e) {
+      std::cout << e.what() << std::endl;
+    }
+
+    if (connected == 0) {
+        shutdownSafely();
+    }
+}
+
+void Server::readContinuously(){
   int bytes_read;
   try {
       while ((bytes_read = read(ListenToFD, MessageBuffer, BUFFER_SIZE)) > 0) {
