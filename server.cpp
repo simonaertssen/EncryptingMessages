@@ -6,7 +6,7 @@
 #include "server.hpp"
 
 
-Server::Server() : SimpleSocket(){
+Server::Server(char *IP, int PORT) : TCPClient(char *IP, int PORT){
   Address.sin_addr.s_addr = INADDR_ANY;
   CHECK(bind(FD, (struct sockaddr*)&Address, AddressLength));
   CHECK(listen(FD, MAX_CONNECTIONS));

@@ -22,8 +22,8 @@ int main(int argc, char *argv[]){
     std::cout << HOST << " is hosting this script on " << IP << std::endl;
 
     // Make a client and a server
-
     
+
 
     return 0;
 }

@@ -20,7 +20,12 @@ class TCPClient {
     int FD;
     struct sockaddr_in Address;
     int AddressLength;
-    TCPClient(IP, PORT);
+
+    TCPClient(char *IP, int PORT);
+    void connect_or_bind();
+    void *connectSafely();
+    void releaseDependencies();
+
   public:
     virtual ~TCPClient();
 };

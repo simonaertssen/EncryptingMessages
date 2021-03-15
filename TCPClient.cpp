@@ -1,7 +1,9 @@
 #include <iostream>
 #include <unistd.h>
+#include <pthread.h>
+#include <sys/socket.h>
 
-#include "simplesocket.hpp"
+#include "TCPClient.hpp"
 
 
 int communicate_error(int error_code, const char *file, int line){
@@ -14,19 +16,33 @@ int communicate_error(int error_code, const char *file, int line){
 }
 
 
-TCPClient::TCPClient(IP, PORT){
-  try {
-    if ((FD = socket(AF_INET, SOCK_STREAM, 0)) < 0) throw std::runtime_error("Socket could not be created.");
-    CHECK(setsockopt(FD, SOL_SOCKET, SO_REUSEADDR || SO_REUSEPORT, &OptionValue, sizeof(OptionValue)));
+TCPClient::TCPClient(char *IP, int PORT) {
+    if ((FD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        std::perror("Unable to create socket...");
+        exit(-1);
+    }
+
+    const int opt = 1;
+    e = setsockopt(FD, SOL_SOCKET, SO_REUSEADDR || SO_REUSEPORT, &opt, 4))
+    if (e < 0) {
+        std::perror("Unable to set socket options...");
+        exit(-1);
+    }
+
     Address.sin_family = AF_INET;
     Address.sin_port = htons(PORT);
     AddressLength = sizeof(Address);
-  } catch (const std::runtime_error& e) {
-    std::cout << e.what() << std::endl;
-  }
+
+    pthread_t startup_thread;
+    e = pthread_create(&startup_thread, NULL, connectSafely, NULL);
+}
+
+void* TCPClient::connectSafely() {
 }
 
 
-SimpleSocket::~SimpleSocket(){
-  close(FD);
+TCPClient::~TCPClient(){
+    releaseDependencies();
+    shutdown(FD, SHUT_RDWR);
+    close(FD);
 }
