@@ -4,6 +4,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#include "TCPClient.hpp"
 
 int main(int argc, char *argv[]){
     // Get host name, set ip and port
@@ -19,11 +20,12 @@ int main(int argc, char *argv[]){
     }
     struct in_addr **addr_list = (struct in_addr **)HOST_INFO->h_addr_list;
     char *IP = inet_ntoa(*addr_list[0]);
+    int PORT = 8080;
     std::cout << HOST << " is hosting this script on " << IP << std::endl;
 
     // Make a client and a server
-    
-
+    TCPClient *test = new TCPClient(IP, PORT);
+    delete test;
 
     return 0;
 }

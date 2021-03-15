@@ -23,7 +23,7 @@ TCPClient::TCPClient(char *IP, int PORT) {
     }
 
     const int opt = 1;
-    e = setsockopt(FD, SOL_SOCKET, SO_REUSEADDR || SO_REUSEPORT, &opt, 4))
+    e = setsockopt(FD, SOL_SOCKET, SO_REUSEADDR, &opt, 4);
     if (e < 0) {
         std::perror("Unable to set socket options...");
         exit(-1);
@@ -34,14 +34,37 @@ TCPClient::TCPClient(char *IP, int PORT) {
     AddressLength = sizeof(Address);
 
     pthread_t startup_thread;
-    e = pthread_create(&startup_thread, NULL, connectSafely, NULL);
+    // e = pthread_create(&startup_thread, NULL, TCPClient::connectSafely, NULL);
 }
 
-void* TCPClient::connectSafely() {
+
+void TCPClient::connect_or_bind() {
+    throw std::runtime_error("connect_or_bind is not implemented.");
+}
+
+
+void TCPClient::releaseDependencies() {
+    // If not overriden then don't do anything
+    int t = 0;
+}
+
+void TCPClient::connectSafely() {
+    int connected = 0;
+    try {
+        connect_or_bind();
+        connected = 1;
+    } catch (const std::runtime_error& e) {
+      std::cout << e.what() << std::endl;
+    }
+
+    if (connected == 0) {
+        delete this;
+    }
 }
 
 
 TCPClient::~TCPClient(){
+    std::cout << "Calling TCPClient destructor" << std::endl;
     releaseDependencies();
     shutdown(FD, SHUT_RDWR);
     close(FD);

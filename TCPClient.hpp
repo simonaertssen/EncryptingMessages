@@ -21,13 +21,12 @@ class TCPClient {
     struct sockaddr_in Address;
     int AddressLength;
 
-    TCPClient(char *IP, int PORT);
-    void connect_or_bind();
-    void *connectSafely();
-    void releaseDependencies();
-
   public:
-    virtual ~TCPClient();
+      TCPClient(char *IP, int PORT);
+      virtual void connect_or_bind(void);
+      virtual void releaseDependencies(void);
+      void connectSafely(void);
+      virtual ~TCPClient();
 };
 
 #endif /* TCP_CLIENT_H */
