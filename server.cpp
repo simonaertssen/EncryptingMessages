@@ -7,16 +7,21 @@
 #include "server.hpp"
 
 
-Server::Server(char *IP, int PORT) : TCPClient(char *IP, int PORT){
+Server::Server(char *IP, int PORT) : TCPnode(IP, PORT){
   Address.sin_addr.s_addr = INADDR_ANY;
-  connectSafely()
+  connectSafely();
   readContinuously();
 }
 
-void TCPClient::connectSafely() {
+
+Server::~Server(){
+}
+
+
+void Server::connectSafely() {
     int connected = 0;
     try {
-        if (bind(myFD, (struct sockaddr*)&Address, AddressLength) != 0) {
+        if (bind(myFD, (struct sockaddr*)&Address, ADL) != 0) {
             throw std::runtime_error("Unable to bind socket...");
         }
 
@@ -24,7 +29,7 @@ void TCPClient::connectSafely() {
             throw std::runtime_error("Unable to listen...");
         }
 
-        yoFD = accept(myFD, (struct sockaddr*)&Address, &ADL));
+        yoFD = accept(myFD, (struct sockaddr*)&Address, (socklen_t *)&ADL);
         if (yoFD < 0) {
             if (errno == ETIMEDOUT || errno == EAGAIN || errno == EWOULDBLOCK) {
                 throw std::runtime_error("Connection timed out...");
@@ -36,7 +41,7 @@ void TCPClient::connectSafely() {
         connected = 1;
         std::cout << myName() << " is safely connected" << std::endl;
     } catch (const std::runtime_error& e) {
-        std::cout << myName() << ": error code " << errno << ". "
+        std::cout << myName() << ": error code " << errno << ". ";
         std::cout << e.what() << std::endl;
         exit(errno);
     }
@@ -46,24 +51,21 @@ void TCPClient::connectSafely() {
     }
 }
 
+
+const char *Server::myName() {
+    return typeid(this).name();
+}
+
+
 void Server::readContinuously(){
-  int bytes_read;
-  try {
-      while ((bytes_read = read(ListenToFD, MessageBuffer, BUFFER_SIZE)) > 0) {
-      MessageBuffer[bytes_read] = '\0';
-      std::cout << "Message received: " << MessageBuffer << std::endl;
-      MessageBuffer[0] = '\0';
+    while (recv(yoFD, MessageBuffer, BUFFER_SIZE, 0) > 0) {
+        // MessageBuffer[bytes_read] = '\0';
+        std::cout << "Message received: " << MessageBuffer << std::endl;
+        // MessageBuffer[0] = '\0';
     }
-  } catch (const std::runtime_error& e) {
-    std::cout << e.what() << std::endl;
-  }
 }
 
-Server::~Server(){
-}
-
-
-int main(int argc, char *argv[]){
-  Server* server = new Server();
-  delete server;
-}
+// int main(int argc, char *argv[]){
+//   Server* server = new Server();
+//   delete server;
+// }

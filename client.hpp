@@ -1,13 +1,14 @@
 #ifndef CLIENT_H // include guard
 #define CLIENT_H
 
-#include "simplesocket.hpp"
+#include "TCPnode.hpp"
 
 
-class Client : public SimpleSocket{
+class Client : public TCPnode{
   public:
     Client();
     ~Client();
+    void connectSafely();
 };
 
 

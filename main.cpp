@@ -4,7 +4,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#include "TCPnode.hpp"
+#include "server.hpp"
 
 int main(int argc, char *argv[]){
     // Get host name, set ip and port
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
     std::cout << HOST << " is hosting this script on " << IP << std::endl;
 
     // Make a client and a server
-    TCPnode *test = new TCPnode(IP, PORT);
+    Server *test = new Server(IP, PORT);
     delete test;
 
     return 0;

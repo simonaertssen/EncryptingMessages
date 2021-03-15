@@ -1,18 +1,7 @@
 #include <iostream>
 #include <unistd.h>
-#include <sys/socket.h>
 
 #include "TCPnode.hpp"
-
-
-int communicate_error(int error_code, const char *file, int line){
-  int SUCCESS = 0;
-	if (error_code != SUCCESS){
-    std::cout << "ERROR: code " << error_code << " in file " << file << ", line " << line << "." << std::endl;
-    exit(1);
-  }
-  return error_code;
-}
 
 
 TCPnode::TCPnode(char *IP, int PORT) {
@@ -30,11 +19,11 @@ TCPnode::TCPnode(char *IP, int PORT) {
 
     Address.sin_family = AF_INET;
     Address.sin_port = htons(PORT);
-    ADL = (socklen_t *) sizeof(Address);
+    ADL = sizeof(Address);
+}
 
-    // connectSafely();
-    // pthread_t startup_thread;
-    // e = pthread_create(&startup_thread, NULL, TCPClient::connectSafely, NULL);
+
+TCPnode::~TCPnode(){
 }
 
 
@@ -43,33 +32,8 @@ const char *TCPnode::myName() {
 }
 
 
-// void TCPClient::connect_or_bind() {
-//     throw std::runtime_error("connect_or_bind is not implemented.");
-// }
-
-
-// void TCPClient::connectSafely() {
-//     int connected = 0;
-//     try {
-//         connect_or_bind();
-//         connected = 1;
-//         std::cout << name << " is safely connected" << std::endl;
-//     } catch (const std::runtime_error& e) {
-//       std::cout << e.what() << std::endl;
-//     }
-//
-//     if (connected == 0) {
-//         shutdownSafely();
-//     }
-// }
-
-
 void TCPnode::shutdownSafely() {
     std::cout << myName() << " shutting down safely" << std::endl;
-    releaseDependencies();
     shutdown(myFD, SHUT_RDWR);
     close(myFD);
-}
-
-TCPnode::~TCPnode(){
 }
