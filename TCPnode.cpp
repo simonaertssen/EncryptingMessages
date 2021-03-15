@@ -16,13 +16,13 @@ int communicate_error(int error_code, const char *file, int line){
 
 
 TCPnode::TCPnode(char *IP, int PORT) {
-    if ((FD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((myFD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         std::perror("Unable to create socket...");
         exit(-1);
     }
 
     const int opt = 1;
-    e = setsockopt(FD, SOL_SOCKET, SO_REUSEADDR, &opt, 4);
+    e = setsockopt(myFD, SOL_SOCKET, SO_REUSEADDR, &opt, 4);
     if (e < 0) {
         std::perror("Unable to set socket options...");
         exit(-1);
@@ -30,7 +30,7 @@ TCPnode::TCPnode(char *IP, int PORT) {
 
     Address.sin_family = AF_INET;
     Address.sin_port = htons(PORT);
-    AddressLength = sizeof(Address);
+    ADL = (socklen_t *) sizeof(Address);
 
     // connectSafely();
     // pthread_t startup_thread;
@@ -38,7 +38,7 @@ TCPnode::TCPnode(char *IP, int PORT) {
 }
 
 
-char *TCPnode::myName() {
+const char *TCPnode::myName() {
     return typeid(this).name();
 }
 
@@ -64,16 +64,11 @@ char *TCPnode::myName() {
 // }
 
 
-void TCPnode::releaseDependencies() {
-    // If not overriden then don't do anything
-}
-
-
 void TCPnode::shutdownSafely() {
-    std::cout << name << " shutting down safely" << std::endl;
+    std::cout << myName() << " shutting down safely" << std::endl;
     releaseDependencies();
-    shutdown(FD, SHUT_RDWR);
-    close(FD);
+    shutdown(myFD, SHUT_RDWR);
+    close(myFD);
 }
 
 TCPnode::~TCPnode(){

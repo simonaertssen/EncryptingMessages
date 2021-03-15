@@ -1,18 +1,18 @@
 #ifndef SERVER_H // include guard
 #define SERVER_H
 
-#include "TCPClient.hpp"
+#include "TCPnode.hpp"
 
 
 class Server : public TCPnode{
   private:
     int MAX_CONNECTIONS = 3;
-    int ListenToFD;
-    int BUFFER_SIZE = BUFFER_SIZE_CONSTANT;
-    char MessageBuffer[BUFFER_SIZE_CONSTANT] = {0};
+    int BUFFER_SIZE = 1024;
+    char MessageBuffer[BUFFER_SIZE] = {0};
   public:
     Server();
-    void ReadContinuously();
+    void connectSafely();
+    void readContinuously();
     ~Server();
 };
 

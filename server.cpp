@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <time.h>
+#include <cerrno>
 
 #include "server.hpp"
 
@@ -15,18 +16,29 @@ Server::Server(char *IP, int PORT) : TCPClient(char *IP, int PORT){
 void TCPClient::connectSafely() {
     int connected = 0;
     try {
-        CHECK(bind(FD, (struct sockaddr*)&Address, AddressLength));
-        CHECK(listen(FD, MAX_CONNECTIONS));
-        try {
-          if ((ListenToFD = accept(FD, (struct sockaddr*)&Address, (socklen_t*)&AddressLength)) < 0)
-            throw std::runtime_error("Connection was not accepted.");
-        } catch (const std::runtime_error& e) {
-          std::cout << e.what() << std::endl;
+        if (bind(myFD, (struct sockaddr*)&Address, AddressLength) != 0) {
+            throw std::runtime_error("Unable to bind socket...");
         }
+
+        if (listen(myFD, MAX_CONNECTIONS) != 0) {
+            throw std::runtime_error("Unable to listen...");
+        }
+
+        yoFD = accept(myFD, (struct sockaddr*)&Address, &ADL));
+        if (yoFD < 0) {
+            if (errno == ETIMEDOUT || errno == EAGAIN || errno == EWOULDBLOCK) {
+                throw std::runtime_error("Connection timed out...");
+            } else {
+                throw std::runtime_error("Connection was not accepted...");
+            }
+        }
+
         connected = 1;
-        std::cout << name << " is safely connected" << std::endl;
+        std::cout << myName() << " is safely connected" << std::endl;
     } catch (const std::runtime_error& e) {
-      std::cout << e.what() << std::endl;
+        std::cout << myName() << ": error code " << errno << ". "
+        std::cout << e.what() << std::endl;
+        exit(errno);
     }
 
     if (connected == 0) {

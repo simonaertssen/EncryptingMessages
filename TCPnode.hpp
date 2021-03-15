@@ -5,7 +5,6 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 
-#define BUFFER_SIZE_CONSTANT 1024
 #define CHECK(ans) communicate_error((ans), __FILE__, __LINE__)
 
 
@@ -17,16 +16,16 @@ class TCPnode {
 
     protected:
         int e;
-        int FD;
+        int myFD;
+        int yoFD;
         struct sockaddr_in Address;
-        int AddressLength;
+        socklen_t *ADL;
 
     public:
         TCPnode(char *IP, int PORT);
-        char *myName();
+        virtual const char *myName();
         // void connectSafely();
         // virtual void connect_or_bind();
-        virtual void releaseDependencies();
         void shutdownSafely();
 
 
