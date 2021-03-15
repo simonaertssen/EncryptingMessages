@@ -1,5 +1,5 @@
-#ifndef TCP_CLIENT_H // include guard
-#define TCP_CLIENT_H
+#ifndef TCP_NODE_H // include guard
+#define TCP_NODE_H
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -11,7 +11,7 @@
 
 int communicate_error(int error_code, const char *file, int line);
 
-class TCPClient {
+class TCPnode {
   // A base class for the socket operations, not to be used directly.
     private:
 
@@ -21,10 +21,8 @@ class TCPClient {
         struct sockaddr_in Address;
         int AddressLength;
 
-
-
     public:
-        TCPClient(char *IP, int PORT);
+        TCPnode(char *IP, int PORT);
         char *myName();
         // void connectSafely();
         // virtual void connect_or_bind();
@@ -32,7 +30,7 @@ class TCPClient {
         void shutdownSafely();
 
 
-      virtual ~TCPClient();
+      virtual ~TCPnode();
 };
 
-#endif /* TCP_CLIENT_H */
+#endif /* TCP_NODE_H */

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "TCPClient.hpp"
+#include "TCPnode.hpp"
 
 
 int communicate_error(int error_code, const char *file, int line){
@@ -15,7 +15,7 @@ int communicate_error(int error_code, const char *file, int line){
 }
 
 
-TCPClient::TCPClient(char *IP, int PORT) {
+TCPnode::TCPnode(char *IP, int PORT) {
     if ((FD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         std::perror("Unable to create socket...");
         exit(-1);
@@ -38,7 +38,7 @@ TCPClient::TCPClient(char *IP, int PORT) {
 }
 
 
-char *TCPClient::myName() {
+char *TCPnode::myName() {
     return typeid(this).name();
 }
 
@@ -64,17 +64,17 @@ char *TCPClient::myName() {
 // }
 
 
-void TCPClient::releaseDependencies() {
+void TCPnode::releaseDependencies() {
     // If not overriden then don't do anything
 }
 
 
-void TCPClient::shutdownSafely() {
+void TCPnode::shutdownSafely() {
     std::cout << name << " shutting down safely" << std::endl;
     releaseDependencies();
     shutdown(FD, SHUT_RDWR);
     close(FD);
 }
 
-TCPClient::~TCPClient(){
+TCPnode::~TCPnode(){
 }
