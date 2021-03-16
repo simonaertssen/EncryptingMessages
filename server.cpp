@@ -10,7 +10,6 @@
 Server::Server(char *IP, int PORT) : TCPnode(IP, PORT){
   Address.sin_addr.s_addr = INADDR_ANY;
   connectSafely();
-  // readContinuously();
 }
 
 
@@ -64,8 +63,3 @@ void Server::readContinuously(){
         // MessageBuffer[0] = '\0';
     }
 }
-
-// int main(int argc, char *argv[]){
-//   Server* server = new Server();
-//   delete server;
-// }
