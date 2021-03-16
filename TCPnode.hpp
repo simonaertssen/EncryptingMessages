@@ -5,15 +5,13 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 
+# define BUFFER_SIZE 128
+
 
 class TCPnode {
   // A base class for the socket operations, not to be used directly.
-    private:
-
     protected:
         int e;
-        int myFD;
-        int yoFD;
         struct sockaddr_in Address;
         int ADL;
 
@@ -22,7 +20,12 @@ class TCPnode {
 
     public:
         TCPnode(char *IP, int PORT);
-        ~TCPnode();
+        virtual ~TCPnode() = default;
+
+        int myFD;
+        void send(char const *message);
+        void receive(int from_client);
+
 };
 
 #endif /* TCP_NODE_H */

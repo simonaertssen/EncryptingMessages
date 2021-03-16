@@ -25,7 +25,6 @@ int main(int argc, char *argv[]){
 
     // Make a client and a server
     Server *test = new Server(IP, PORT);
-    std::cout << "Ready for the end?" << std::endl;
     delete test;
 
     return 0;

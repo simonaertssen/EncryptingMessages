@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
-#include <fcntl.h>
+// #include <fcntl.h>
+#include <time.h>
 
 #include "TCPnode.hpp"
 
@@ -19,13 +20,13 @@ TCPnode::TCPnode(char *IP, int PORT) {
     }
 
     // Set connection timeout: set socket to non-blocking
-    int flags = fcntl(myFD, F_GETFL, NULL);
-    if (flags > 0) {
-        flags |= O_NONBLOCK;
-        if (fcntl(myFD, F_SETFL, flags) < 0) {
-            std::perror("Unable to set socket non-blocking...");
-        }
-    }
+    // int flags = fcntl(myFD, F_GETFL, NULL);
+    // if (flags > 0) {
+    //     flags |= O_NONBLOCK;
+    //     if (fcntl(myFD, F_SETFL, flags) < 0) {
+    //         std::perror("Unable to set socket non-blocking...");
+    //     }
+    // }
 
     // // flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
     // //
@@ -67,7 +68,30 @@ TCPnode::TCPnode(char *IP, int PORT) {
 }
 
 
-TCPnode::~TCPnode(){
+void TCPnode::send(char const *message) {
+    if (::send(myFD, message, strlen(message), 0) < 0) {
+        std::perror("Sending message failed...");
+    }
+}
+
+
+void TCPnode::receive(int from_client) {
+    int received_size, total_msg_size = 0;
+    char msgBuffer[BUFFER_SIZE];
+
+    std::cout << "Message start ----" << std::endl;
+    while(1) {
+        memset(msgBuffer, 0, BUFFER_SIZE);
+        received_size = recv(from_client, msgBuffer, BUFFER_SIZE, 0);
+        if (received_size < 0) {
+            std::cout << "received " << received_size  << " bytes" << std::endl;
+            break;
+        } else {
+            total_msg_size += received_size;
+            std::cout << msgBuffer;
+        }
+    }
+    std::cout << "Message end ----" << std::endl;
 }
 
 

@@ -4,11 +4,12 @@
 #include "TCPnode.hpp"
 
 
-class Client : public TCPnode{
-  public:
-    Client();
+class Client : public TCPnode {
+public:
+    Client(char *IP, int PORT);
     ~Client();
-    void connectSafely();
+
+    const char *myName();
 };
 
 
