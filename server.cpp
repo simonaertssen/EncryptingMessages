@@ -10,7 +10,7 @@
 Server::Server(char *IP, int PORT) : TCPnode(IP, PORT){
   Address.sin_addr.s_addr = INADDR_ANY;
   connectSafely();
-  readContinuously();
+  // readContinuously();
 }
 
 
