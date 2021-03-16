@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
-// #include <fcntl.h>
-#include <time.h>
+#include <ctime>
 
 #include "TCPnode.hpp"
 
@@ -19,43 +18,10 @@ TCPnode::TCPnode(char *IP, int PORT) {
         exit(-1);
     }
 
-    // Set connection timeout: set socket to non-blocking
-    // int flags = fcntl(myFD, F_GETFL, NULL);
-    // if (flags > 0) {
-    //     flags |= O_NONBLOCK;
-    //     if (fcntl(myFD, F_SETFL, flags) < 0) {
-    //         std::perror("Unable to set socket non-blocking...");
-    //     }
-    // }
-
-    // // flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
-    // //
-    // // if (fcntl(myFD, F_SETFL, flags) < 0) {
-    // //     std::perror("Unable to set connection timeout options...");
-    // // }
-    //
+    // Set reception and sending timeout
     struct timeval timeout;  // has size of 16 bytes
     timeout.tv_sec  = 1;
     timeout.tv_usec = 10;
-    // fd_set myset;
-    // FD_ZERO(&myset);
-    // FD_SET(myFD, &myset);
-    // if (select(0, &myset, NULL, NULL, &timeout) < 0) {
-    //     std::perror("Unable to set connection timeout options...");
-    // }
-
-    // fd_set  fdread,fdwrite;
-	// int		ret = 0;
-	// FD_ZERO( &fdread );
-	// FD_ZERO( &fdwrite );
-	// FD_SET( myFD, &fdread);
-	// FD_SET( myFD, &fdwrite);
-    // std::cout << "Time out starts" << std::endl;
-    // if (select(myFD, &fdread, &fdwrite, NULL, &timeout) < 0) {
-    //     std::perror("Unable to set connection timeout options...");
-    // }
-    // std::cout << "Time out ends" << std::endl;
-
     if (setsockopt(myFD, SOL_SOCKET, SO_RCVTIMEO, &timeout, 16) < 0 ||
         setsockopt(myFD, SOL_SOCKET, SO_SNDTIMEO, &timeout, 16) < 0) {
         std::perror("Unable to set recv/send timeout options...");
@@ -69,6 +35,15 @@ TCPnode::TCPnode(char *IP, int PORT) {
 
 
 void TCPnode::send(char const *message) {
+    std::cout << myName() << " sending " << message;
+    std::cout << " of size " << strlen(message) << " bytes" << std::endl;
+
+    int msg_size = strlen(message);
+    // char msg_size = static_cast<char>(strlen(message));
+    if (::send(myFD, &msg_size, sizeof(msg_size), 0) < 0) {
+        std::perror("Sending message size failed...");
+        exit(-1);
+    }
     if (::send(myFD, message, strlen(message), 0) < 0) {
         std::perror("Sending message failed...");
     }
@@ -76,22 +51,61 @@ void TCPnode::send(char const *message) {
 
 
 void TCPnode::receive(int from_client) {
-    int received_size, total_msg_size = 0;
-    char msgBuffer[BUFFER_SIZE];
+    int msg_size = 0, num_bytes_received = 0, total_bytes_received = 0;
+    char msg_buffer[BUFFER_SIZE];
+    std::clock_t start_time = std::clock(), now = std::clock();
+    double elapsed_time, MAX_TIME = 5.0;
+
+    // Receive message length:
+    num_bytes_received = recv(from_client, &msg_size, sizeof(msg_size), 0);
+    if (num_bytes_received < 0) {
+        std::perror("Receiving message size failed...");
+        exit(-1);
+
+    } else if (num_bytes_received != sizeof(int)) {
+        std::perror("Received wrong number of bytes...");
+        exit(-1);
+    }
 
     std::cout << "Message start ----" << std::endl;
-    while(1) {
-        memset(msgBuffer, 0, BUFFER_SIZE);
-        received_size = recv(from_client, msgBuffer, BUFFER_SIZE, 0);
-        if (received_size < 0) {
-            std::cout << "received " << received_size  << " bytes" << std::endl;
-            break;
-        } else {
-            total_msg_size += received_size;
-            std::cout << msgBuffer;
-        }
+    memset(msg_buffer, 0, BUFFER_SIZE);
+    num_bytes_received = recv(from_client, msg_buffer, BUFFER_SIZE, 0);
+    if (num_bytes_received < 0) {
+        std::perror("Receiving message failed...");
+        exit(-1);
+    } else if (num_bytes_received != msg_size) {
+        std::perror("Received wrong number of bytes in message...");
+        exit(-1);
     }
+    std::cout << msg_buffer << std::endl;
     std::cout << "Message end ----" << std::endl;
+
+    // while(1) {
+    //     // Register timeout
+    //     // now = std::clock();
+    //     // elapsed_time = (now - start_time)/(double)CLOCKS_PER_SEC;
+    //     // if (total_bytes_received == 0 && elapsed_time > MAX_TIME) {
+    //     //     std::perror("Reception timeout error...");
+    //     //     break;
+    //     // }
+    //     // Receive the message
+    //     memset(msg_buffer, 0, BUFFER_SIZE);
+    //     num_bytes_received = recv(from_client, msg_buffer, BUFFER_SIZE, 0);
+    //     if (num_bytes_received < 0) {
+    //         std::cout << "received " << num_bytes_received  << " bytes" << std::endl;
+    //         break;
+    //     } else {
+    //         std::cout << "received " << num_bytes_received  << " bytes" << std::endl;
+    //         total_bytes_received += num_bytes_received;
+    //         std::cout << msg_buffer;
+    //     }
+    // }
+
+    // memset(msgBuffer, 0, BUFFER_SIZE);
+    // num_bytes_received = recv(from_client, msgBuffer, BUFFER_SIZE, 0);
+    // std::cout << msgBuffer << std::endl;
+
+    // std::cout << "Message end ----" << std::endl;
 }
 
 

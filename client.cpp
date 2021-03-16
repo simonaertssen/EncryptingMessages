@@ -61,7 +61,22 @@ int main(int argc, char *argv[]){
 
     // Make a client and a server
     Client* client = new Client(IP, PORT);
+    client->send("Hello from client script");
+    // client->send("This is a good message service");
     delete client;
 
     return 0;
 }
+
+
+// int main(int argc, char *argv[]){
+//   Client* client = new Client();
+//   client.send("Hello from client");
+//   sleep(5);
+//   client.send("Hello from client")
+//   message = "This is a good message service...";
+//   send(FD, message, strlen(message), 0);
+//   std::cout << "Message sent..." << std::endl;
+//   sleep(5);
+//   delete client;
+// }
