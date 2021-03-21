@@ -5,7 +5,7 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 
-# define BUFFER_SIZE 32
+# define BUFFER_SIZE 16
 
 
 char *get_host_ip_information();

@@ -61,8 +61,9 @@ TCPnode::~TCPnode() {
     delete[] msg_buffer;
 }
 
+
 void TCPnode::send(char const *message) {
-    std::cout << myName() << " sending " << message;
+    std::cout << myName() << " sending: " << message;
     std::cout << " of size " << strlen(message) << " bytes" << std::endl;
 
     // Send message size:
@@ -72,10 +73,17 @@ void TCPnode::send(char const *message) {
         exit(-1);
     }
 
-    // Copy message into buffer:
-    strncpy(msg_buffer, message, msg_size);
-    if (::send(myFD, msg_buffer, msg_size, 0) != msg_size) {
-        std::perror("Sending message failed...");
+    // Copy message into buffer (piece by piece if too large):
+    int total_bytes_sent = 0, send_size = BUFFER_SIZE;
+    int num_packets = msg_size / BUFFER_SIZE, num_bytes_remain = msg_size % BUFFER_SIZE;
+    for (int packet = 0; packet < num_packets + 1; packet++) {
+        if (packet == num_packets) send_size = msg_size % BUFFER_SIZE;  // Leftover bytes
+
+        memset(msg_buffer, 0, BUFFER_SIZE);
+        strncpy(msg_buffer, message + packet * BUFFER_SIZE, send_size);
+        if (::send(myFD, msg_buffer, send_size, 0) != send_size) {
+            std::perror("Sending message failed...");
+        }
     }
 
     // Get a signal from the other side that everything came through:
@@ -103,19 +111,22 @@ void TCPnode::receive(int from_client) {
         exit(-1);
     }
 
-    // Receive the actual message:
+    // Receive the actual message (piece by piece if too large):
+    int total_bytes_recv = 0, recv_size = BUFFER_SIZE;
+    int num_packets = msg_size / BUFFER_SIZE, num_bytes_remain = msg_size % BUFFER_SIZE;
     std::cout << "MSG (" << msg_size << "): ";
-    memset(msg_buffer, 0, BUFFER_SIZE);
-    // strcat(msg_buffer, "\n");
-    num_bytes_received = recv(from_client, msg_buffer, msg_size, 0);
-    if (num_bytes_received < 0) {
-        std::perror("Receiving message failed...");
-        exit(-1);
-    } else if (num_bytes_received != msg_size) {
-        std::perror("Received wrong number of bytes in message...");
-        exit(-1);
+    for (int packet = 0; packet < num_packets + 1; packet++) {
+        if (packet == num_packets) recv_size = msg_size % BUFFER_SIZE;  // Leftover bytes
+
+        memset(msg_buffer, 0, BUFFER_SIZE);
+        if (recv(from_client, msg_buffer, recv_size, 0) != recv_size) {
+            std::perror("Receiving message failed...");
+            exit(-1);
+        }
+
+        std::cout << msg_buffer;
     }
-    std::cout << msg_buffer << std::endl;
+    std::cout << std::endl;
 
     // Signal reception was good:
     if (::send(from_client, &msg_size, sizeof(msg_size), 0) != sizeof(int)) {
