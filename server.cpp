@@ -58,7 +58,8 @@ int main(int argc, char *argv[]){
     // Make a server and receive some messages:
     Server *server = new Server(IP, PORT);
     server->receive(server->yoFD);
-    // test->receive(test->yoFD);
+    server->receive(server->yoFD);
+    // server->receive(server->yoFD);
 
     delete server;
     return 0;

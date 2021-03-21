@@ -66,18 +66,26 @@ void TCPnode::send(char const *message) {
     std::cout << " of size " << strlen(message) << " bytes" << std::endl;
 
     // Send message size:
-    int msg_size = strlen(message);
-    if (::send(myFD, &msg_size, sizeof(msg_size), 0) < 0) {
+    int msg_size = strlen(message), num_bytes_received = sizeof(msg_size);
+    if (::send(myFD, &msg_size, num_bytes_received, 0) != num_bytes_received) {
         std::perror("Sending message size failed...");
         exit(-1);
     }
 
     // Copy message into buffer:
-    // memset(msg_buffer, 0, BUFFER_SIZE);
     strncpy(msg_buffer, message, msg_size);
-    if (::send(myFD, msg_buffer, msg_size, 0) < 0) {
+    if (::send(myFD, msg_buffer, msg_size, 0) != msg_size) {
         std::perror("Sending message failed...");
     }
+
+    // Get a signal from the other side that everything came through:
+    int verify;
+    num_bytes_received = recv(myFD, &verify, sizeof(verify), 0);
+    if (num_bytes_received != sizeof(int) || verify != msg_size) {
+        std::perror("Sent wrong number of verification bytes...");
+        exit(-1);
+    }
+
 }
 
 
@@ -86,7 +94,6 @@ void TCPnode::receive(int from_client) {
 
     // Receive message length:
     num_bytes_received = recv(from_client, &msg_size, sizeof(msg_size), 0);
-    std::cout << "Message contains " << msg_size << " bytes" << std::endl;
     if (num_bytes_received < 0) {
         std::perror("Receiving message size failed...");
         exit(-1);
@@ -97,7 +104,7 @@ void TCPnode::receive(int from_client) {
     }
 
     // Receive the actual message:
-    std::cout << "Message start ---- " << std::endl;
+    std::cout << "MSG (" << msg_size << "): ";
     memset(msg_buffer, 0, BUFFER_SIZE);
     // strcat(msg_buffer, "\n");
     num_bytes_received = recv(from_client, msg_buffer, msg_size, 0);
@@ -109,7 +116,12 @@ void TCPnode::receive(int from_client) {
         exit(-1);
     }
     std::cout << msg_buffer << std::endl;
-    std::cout << "Message end ----" << std::endl;
+
+    // Signal reception was good:
+    if (::send(from_client, &msg_size, sizeof(msg_size), 0) != sizeof(int)) {
+        std::perror("Sending verification failed...");
+        exit(-1);
+    }
 }
 
 

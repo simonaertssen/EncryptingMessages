@@ -48,7 +48,8 @@ int main(int argc, char *argv[]){
     Client* client = new Client(IP, PORT);
 
     client->send("Hello from client script");
-    // client->send("This is a good message service");
+    client->send("This is a good message service");
+    // client->send("I_really_like_this_service_because_it_is_so_good");
 
     delete client;
     return 0;
