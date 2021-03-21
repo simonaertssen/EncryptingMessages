@@ -1,7 +1,8 @@
 #ifndef ENCRYPTION_H // include guard
 #define ENCRYPTION_H
 
-double gcd(double a, double b);
-double get_random_prime();
+unsigned long get_random_prime();
+unsigned long lcm(unsigned long a, unsigned long b);
+unsigned long gcd(unsigned long a, unsigned long b);
 
 #endif /* ENCRYPTION_H */

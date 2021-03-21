@@ -23,6 +23,8 @@ char *get_host_ip_information() {
     struct in_addr **addr_list = (struct in_addr **)HOST_INFO->h_addr_list;
     char *IP = inet_ntoa(*addr_list[0]);
     std::cout << HOST << " is hosting this script on " << IP << std::endl;
+    fflush(stdout);
+    
     return IP;
 }
 

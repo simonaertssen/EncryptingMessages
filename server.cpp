@@ -1,8 +1,11 @@
-// g++ -std=c++11 -o server.o simplesocket.cpp server.cpp && ./server.o
+// g++ -std=c++11 -o server.o TCPnode.cpp encryption.cpp server.cpp && ./server.o
+
 #include <iostream>
 #include <cerrno>
+#include <math.h>
 
 #include "server.hpp"
+#include "encryption.hpp"
 
 
 Server::Server(char *IP, int PORT) : TCPnode(IP, PORT){
@@ -38,6 +41,20 @@ Server::Server(char *IP, int PORT) : TCPnode(IP, PORT){
   if (connected == 0) {
       shutdownSafely();
   }
+
+    // Set private and public keys:
+    p = 17, q = 19, n = p*q;
+    tot = lcm(p - 1, q - 1);
+    e = 3;
+    unsigned long tmp;
+    while (e < tot) {
+      tmp = gcd(e, tot);
+      if (tmp == 1)
+         break;
+      else
+         e++;
+     }
+     d = fmod(1.0 / e, tot);
 }
 
 

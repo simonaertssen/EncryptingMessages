@@ -13,12 +13,12 @@ char *get_host_ip_information();
 class TCPnode {
   // A base class for the socket operations, not to be used directly.
     protected:
-        int e;
         struct sockaddr_in Address;
         int ADL;
         char *msg_buffer = new char[BUFFER_SIZE];
 
-        double p, q, n, e, tot, d;
+        int e;
+        unsigned long p, q, n, tot, d;
 
         virtual const char *myName();
         void shutdownSafely();

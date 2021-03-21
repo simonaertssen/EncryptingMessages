@@ -1,8 +1,10 @@
 // g++ -std=c++11 -o client.o TCPnode.cpp client.cpp && ./client.o
 #include <iostream>
 #include <arpa/inet.h>
+#include <math.h>
 
 #include "client.hpp"
+#include "encryption.hpp"
 
 
 Client::Client(char *IP, int PORT) : TCPnode(IP, PORT){
@@ -29,7 +31,18 @@ Client::Client(char *IP, int PORT) : TCPnode(IP, PORT){
     }
 
     // Set private and public keys:
-    p = 11, q = 13, n = p*q, e = 3, tot, d;
+    p = 11, q = 13, n = p*q;
+    tot = lcm(p - 1, q - 1);
+    e = 3;
+    unsigned long tmp;
+    while (e < tot) {
+      tmp = gcd(e, tot);
+      if (tot == 1)
+         break;
+      else
+         e++;
+     }
+     d = fmod(1.0 / e, tot);
 }
 
 
@@ -62,16 +75,16 @@ int main(int argc, char *argv[]){
     client->send(client->myFD, "Request encryption");
 
     // Get the server's public key:
-    char *message = client->receive(server->yoFD);
-    double server_n = atof(message);
+    // char *message = client->receive(server->yoFD);
+    // double server_n = atof(message);
+    //
+    // message = client->receive(server->yoFD);
+    // double server_e = atof(message);
 
-    message = client->receive(server->yoFD);
-    double server_e = atof(message);
 
-
-    // char *message = client->receive(client->myFD);
-    // std::cout << "MSG (" << strlen(message) << "): ";
-    // std::cout << message << std::endl;
+    char *message = client->receive(client->myFD);
+    std::cout << "MSG (" << strlen(message) << "): ";
+    std::cout << message << std::endl;
 
     delete client;
     return 0;
