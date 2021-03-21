@@ -58,12 +58,15 @@ int main(int argc, char *argv[]){
     // Make a server and receive some messages:
     Server *server = new Server(IP, PORT);
     char *message = server->receive(server->yoFD);
+    std::cout << message << std::endl;
 
-    double prime = atof(message);
-    std::cout << "MSG (" << strlen(message) << "): ";
-    std::cout << prime << std::endl;
+    server->send(server->yoFD, "I_really_like_this_service_because_it_is_soooo_good");
 
-    free(message);
+    // double prime = atof(message);
+    // std::cout << "MSG (" << strlen(message) << "): ";
+    // std::cout << prime << std::endl;
+
+    // free(message);
     delete server;
     return 0;
 }

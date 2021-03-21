@@ -6,6 +6,7 @@
 
 class Server : public TCPnode {
 private:
+    double private_key = 17;
     int MAX_CONNECTIONS = 3;
 
 public:
@@ -13,8 +14,8 @@ public:
     ~Server();
 
     int yoFD;
+    double public_key = 11;
     const char *myName();
 };
-
 
 #endif /* SERVER_H */

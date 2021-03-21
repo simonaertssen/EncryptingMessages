@@ -51,8 +51,21 @@ int main(int argc, char *argv[]){
     // client->send("This is a good message service");
     // client->send("I_really_like_this_service_because_it_is_soooo_good");
 
-    double prime = 1012;
-    client->send(prime);
+    // double prime = 1012;
+    // client->send(prime);
+
+    // Send an encrypted message to the server:
+    // Send a request to communicate:
+    client->send(client->myFD, "Request encryption");
+
+    // Get the server's public key:
+    // char *message = client->receive(server->yoFD);
+    //
+    // double prime = atof(message);
+
+    char *message = client->receive(client->myFD);
+    std::cout << "MSG (" << strlen(message) << "): ";
+    std::cout << message << std::endl;
 
     delete client;
     return 0;

@@ -26,8 +26,8 @@ class TCPnode {
         ~TCPnode();
 
         int myFD;
-        void send(char const *message);
-        void send(const double message);
+        void send(int to_client, const char *message);
+        void send(int to_client, const double message);
         char *receive(int from_client);
 
 };

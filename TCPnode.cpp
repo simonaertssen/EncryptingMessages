@@ -62,13 +62,13 @@ TCPnode::~TCPnode() {
 }
 
 
-void TCPnode::send(char const *message) {
+void TCPnode::send(int to_client, const char *message) {
     std::cout << myName() << " sending: " << message;
     std::cout << " of size " << strlen(message) << " bytes" << std::endl;
 
     // Send message size:
     int msg_size = strlen(message), num_bytes_received = sizeof(msg_size);
-    if (::send(myFD, &msg_size, num_bytes_received, 0) != num_bytes_received) {
+    if (::send(to_client, &msg_size, num_bytes_received, 0) != num_bytes_received) {
         std::perror("Sending message size failed...");
         exit(-1);
     }
@@ -81,14 +81,14 @@ void TCPnode::send(char const *message) {
 
         memset(msg_buffer, 0, BUFFER_SIZE);
         strncpy(msg_buffer, message + packet * BUFFER_SIZE, send_size);
-        if (::send(myFD, msg_buffer, send_size, 0) != send_size) {
+        if (::send(to_client, msg_buffer, send_size, 0) != send_size) {
             std::perror("Sending message failed...");
         }
     }
 
     // Get a signal from the other side that everything came through:
     int verify;
-    num_bytes_received = recv(myFD, &verify, sizeof(verify), 0);
+    num_bytes_received = recv(to_client, &verify, sizeof(verify), 0);
     if (num_bytes_received != sizeof(int) || verify != msg_size) {
         std::perror("Sent wrong number of verification bytes...");
         exit(-1);
@@ -96,9 +96,9 @@ void TCPnode::send(char const *message) {
 }
 
 
-void TCPnode::send(const double message) {
+void TCPnode::send(int to_client, const double message) {
     std::string message_string = std::to_string(message);
-    send(const_cast<char*>(message_string.c_str()));
+    send(to_client, const_cast<char*>(message_string.c_str()));
 }
 
 
