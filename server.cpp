@@ -57,10 +57,12 @@ int main(int argc, char *argv[]){
 
     // Make a server and receive some messages:
     Server *server = new Server(IP, PORT);
-    server->receive(server->yoFD);
-    // server->receive(server->yoFD);
-    server->receive(server->yoFD);
+    char *message = server->receive(server->yoFD);
 
+    std::cout << "MSG (" << strlen(message) << "): ";
+    std::cout << message << std::endl;
+
+    free(message);
     delete server;
     return 0;
 }

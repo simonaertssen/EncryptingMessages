@@ -58,7 +58,6 @@ TCPnode::TCPnode(char *IP, int PORT) {
 
 
 TCPnode::~TCPnode() {
-    delete[] msg_buffer;
 }
 
 
@@ -73,17 +72,8 @@ void TCPnode::send(char const *message) {
         exit(-1);
     }
 
-    // Copy message into buffer (piece by piece if too large):
-    int total_bytes_sent = 0, send_size = BUFFER_SIZE;
-    int num_packets = msg_size / BUFFER_SIZE, num_bytes_remain = msg_size % BUFFER_SIZE;
-    for (int packet = 0; packet < num_packets + 1; packet++) {
-        if (packet == num_packets) send_size = msg_size % BUFFER_SIZE;  // Leftover bytes
-
-        memset(msg_buffer, 0, BUFFER_SIZE);
-        strncpy(msg_buffer, message + packet * BUFFER_SIZE, send_size);
-        if (::send(myFD, msg_buffer, send_size, 0) != send_size) {
-            std::perror("Sending message failed...");
-        }
+    if (::send(myFD, message, msg_size, 0) != msg_size) {
+        std::perror("Sending message failed...");
     }
 
     // Get a signal from the other side that everything came through:
@@ -93,18 +83,17 @@ void TCPnode::send(char const *message) {
         std::perror("Sent wrong number of verification bytes...");
         exit(-1);
     }
-
 }
 
 
-void TCPnode::receive(int from_client) {
+char *TCPnode::receive(int from_client) {
     int msg_size, num_bytes_received, total_bytes_received;
 
     // Receive message length:
     num_bytes_received = recv(from_client, &msg_size, sizeof(msg_size), 0);
     if (num_bytes_received <= 0) {
         std::cout << "No new message received." << std::endl;
-        return;
+        return NULL;
 
     } else if (num_bytes_received != sizeof(int)) {
         std::perror("Received wrong number of bytes...");
@@ -112,26 +101,20 @@ void TCPnode::receive(int from_client) {
     }
 
     // Receive the actual message (piece by piece if too large):
-    int total_bytes_recv = 0, recv_size = BUFFER_SIZE;
-    int num_packets = msg_size / BUFFER_SIZE, num_bytes_remain = msg_size % BUFFER_SIZE;
-    std::cout << "MSG (" << msg_size << "): ";
-    for (int packet = 0; packet < num_packets + 1; packet++) {
-        if (packet == num_packets) recv_size = msg_size % BUFFER_SIZE;  // Leftover bytes
-
-        memset(msg_buffer, 0, BUFFER_SIZE);
-        if (recv(from_client, msg_buffer, recv_size, 0) != recv_size) {
-            std::perror("Receiving message failed...");
-            exit(-1);
-        }
-        std::cout << msg_buffer;
+    char *message = NULL;
+    message = (char *)malloc(msg_size);
+    if (recv(from_client, message, msg_size, 0) != msg_size) {
+        std::perror("Receiving message failed...");
+        exit(-1);
     }
-    std::cout << std::endl;
 
     // Signal reception was good:
     if (::send(from_client, &msg_size, sizeof(msg_size), 0) != sizeof(int)) {
         std::perror("Sending verification failed...");
         exit(-1);
     }
+
+    return message;
 }
 
 
