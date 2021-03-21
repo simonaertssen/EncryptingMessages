@@ -1,10 +1,6 @@
 // g++ -std=c++11 -o server.o simplesocket.cpp server.cpp && ./server.o
 #include <iostream>
-#include <unistd.h>
 #include <cerrno>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 
 #include "server.hpp"
 
@@ -55,26 +51,15 @@ const char *Server::myName() {
 
 
 int main(int argc, char *argv[]){
-    // Get host name, set ip and port
-    char HOST[256];
-    if (gethostname(HOST, sizeof(HOST)) != 0) {
-        std::perror("Hostname was not found...");
-        exit(-1);
-    }
-    struct hostent *HOST_INFO = gethostbyname(HOST);
-    if (HOST_INFO == NULL || HOST_INFO->h_length == 0) {
-        std::perror("Host information was not found or is incorrect...");
-        exit(-1);
-    }
-    struct in_addr **addr_list = (struct in_addr **)HOST_INFO->h_addr_list;
-    char *IP = inet_ntoa(*addr_list[0]);
+    // Get some information about the host
+    char *IP = get_host_ip_information();
     int PORT = 8080;
-    std::cout << HOST << " is hosting this script on " << IP << std::endl;
 
-    // Make a client and a server
-    Server *test = new Server(IP, PORT);
-    test->receive(test->yoFD);
-    delete test;
+    // Make a server and receive some messages:
+    Server *server = new Server(IP, PORT);
+    server->receive(server->yoFD);
+    // test->receive(test->yoFD);
 
+    delete server;
     return 0;
 }

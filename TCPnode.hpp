@@ -8,20 +8,22 @@
 # define BUFFER_SIZE 32
 
 
+char *get_host_ip_information();
+
 class TCPnode {
   // A base class for the socket operations, not to be used directly.
     protected:
         int e;
         struct sockaddr_in Address;
         int ADL;
-        char MESSAGE_BUFFER[BUFFER_SIZE];
+        char *msg_buffer = new char[BUFFER_SIZE];
 
         virtual const char *myName();
         void shutdownSafely();
 
     public:
         TCPnode(char *IP, int PORT);
-        virtual ~TCPnode() = default;
+        ~TCPnode();
 
         int myFD;
         void send(char const *message);

@@ -1,9 +1,6 @@
 // g++ -std=c++11 -o client.o TCPnode.cpp client.cpp && ./client.o
 #include <iostream>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 
 #include "client.hpp"
 
@@ -43,40 +40,16 @@ const char *Client::myName() {
 
 
 int main(int argc, char *argv[]){
-    // Get host name, set ip and port
-    char HOST[256];
-    if (gethostname(HOST, sizeof(HOST)) != 0) {
-        std::perror("Hostname was not found...");
-        exit(-1);
-    }
-    struct hostent *HOST_INFO = gethostbyname(HOST);
-    if (HOST_INFO == NULL || HOST_INFO->h_length == 0) {
-        std::perror("Host information was not found or is incorrect...");
-        exit(-1);
-    }
-    struct in_addr **addr_list = (struct in_addr **)HOST_INFO->h_addr_list;
-    char *IP = inet_ntoa(*addr_list[0]);
+    // Get some information about the host
+    char *IP = get_host_ip_information();
     int PORT = 8080;
-    std::cout << HOST << " is hosting this script on " << IP << std::endl;
 
-    // Make a client and a server
+    // Make a client and send some messages
     Client* client = new Client(IP, PORT);
-    client->send("Hello from client script");
-    // client->send("This is a good message service\n");
-    delete client;
 
+    client->send("Hello from client script");
+    // client->send("This is a good message service");
+
+    delete client;
     return 0;
 }
-
-
-// int main(int argc, char *argv[]){
-//   Client* client = new Client();
-//   client.send("Hello from client");
-//   sleep(5);
-//   client.send("Hello from client")
-//   message = "This is a good message service...";
-//   send(FD, message, strlen(message), 0);
-//   std::cout << "Message sent..." << std::endl;
-//   sleep(5);
-//   delete client;
-// }
