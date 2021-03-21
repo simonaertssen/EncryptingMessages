@@ -59,8 +59,9 @@ int main(int argc, char *argv[]){
     Server *server = new Server(IP, PORT);
     char *message = server->receive(server->yoFD);
 
+    double prime = atof(message);
     std::cout << "MSG (" << strlen(message) << "): ";
-    std::cout << message << std::endl;
+    std::cout << prime << std::endl;
 
     free(message);
     delete server;

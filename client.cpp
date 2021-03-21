@@ -49,11 +49,10 @@ int main(int argc, char *argv[]){
 
     // client->send("Hello from client script");
     // client->send("This is a good message service");
-    client->send("I_really_like_this_service_because_it_is_soooo_good");
+    // client->send("I_really_like_this_service_because_it_is_soooo_good");
 
-    // double prime = 1012;
-    // char* message_prime = (char*)(&prime);
-    // client->send(message_prime);
+    double prime = 1012;
+    client->send(prime);
 
     delete client;
     return 0;
