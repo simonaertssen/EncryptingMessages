@@ -102,9 +102,9 @@ void TCPnode::receive(int from_client) {
 
     // Receive message length:
     num_bytes_received = recv(from_client, &msg_size, sizeof(msg_size), 0);
-    if (num_bytes_received < 0) {
-        std::perror("Receiving message size failed...");
-        exit(-1);
+    if (num_bytes_received <= 0) {
+        std::cout << "No new message received." << std::endl;
+        return;
 
     } else if (num_bytes_received != sizeof(int)) {
         std::perror("Received wrong number of bytes...");
@@ -123,7 +123,6 @@ void TCPnode::receive(int from_client) {
             std::perror("Receiving message failed...");
             exit(-1);
         }
-
         std::cout << msg_buffer;
     }
     std::cout << std::endl;

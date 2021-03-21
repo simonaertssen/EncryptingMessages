@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
     Server *server = new Server(IP, PORT);
     server->receive(server->yoFD);
     // server->receive(server->yoFD);
-    // server->receive(server->yoFD);
+    server->receive(server->yoFD);
 
     delete server;
     return 0;
