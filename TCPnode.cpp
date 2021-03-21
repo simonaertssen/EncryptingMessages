@@ -6,7 +6,7 @@
 
 
 TCPnode::TCPnode(char *IP, int PORT) {
-    if ((myFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    if ((myFD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         std::perror("Unable to create socket...");
         exit(-1);
     }
@@ -39,11 +39,14 @@ void TCPnode::send(char const *message) {
     std::cout << " of size " << strlen(message) << " bytes" << std::endl;
 
     int msg_size = strlen(message);
-    // char msg_size = static_cast<char>(strlen(message));
     if (::send(myFD, &msg_size, sizeof(msg_size), 0) < 0) {
         std::perror("Sending message size failed...");
         exit(-1);
     }
+
+    // Copy message into buffer:
+    // if
+    // memcpy ( person.name, myname, strlen(myname)+1 );
     if (::send(myFD, message, strlen(message), 0) < 0) {
         std::perror("Sending message failed...");
     }
@@ -51,7 +54,7 @@ void TCPnode::send(char const *message) {
 
 
 void TCPnode::receive(int from_client) {
-    int msg_size = 0, num_bytes_received = 0, total_bytes_received = 0;
+    int msg_size, num_bytes_received, total_bytes_received;
     char msg_buffer[BUFFER_SIZE];
     std::clock_t start_time = std::clock(), now = std::clock();
     double elapsed_time, MAX_TIME = 5.0;
@@ -64,18 +67,20 @@ void TCPnode::receive(int from_client) {
 
     } else if (num_bytes_received != sizeof(int)) {
         std::perror("Received wrong number of bytes...");
-        exit(-1);
+        // exit(-1);
     }
-
-    std::cout << "Message start ----" << std::endl;
+    std::cout << "Received " << num_bytes_received << " bytes";
+    std::cout << ", message is " << msg_size << " bytes" <<std::endl;
+    std::cout << "Message start ---- " << std::endl;
     memset(msg_buffer, 0, BUFFER_SIZE);
     num_bytes_received = recv(from_client, msg_buffer, BUFFER_SIZE, 0);
     if (num_bytes_received < 0) {
         std::perror("Receiving message failed...");
         exit(-1);
     } else if (num_bytes_received != msg_size) {
-        std::perror("Received wrong number of bytes in message...");
-        exit(-1);
+        // std::perror("Received wrong number of bytes in message...");
+        // exit(-1);
+        std::cout << "Received wrong number of bytes in message..." << std::endl;
     }
     std::cout << msg_buffer << std::endl;
     std::cout << "Message end ----" << std::endl;

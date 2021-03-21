@@ -5,7 +5,7 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 
-# define BUFFER_SIZE 128
+# define BUFFER_SIZE 32
 
 
 class TCPnode {
@@ -14,6 +14,7 @@ class TCPnode {
         int e;
         struct sockaddr_in Address;
         int ADL;
+        char MESSAGE_BUFFER[BUFFER_SIZE];
 
         virtual const char *myName();
         void shutdownSafely();

@@ -61,8 +61,8 @@ int main(int argc, char *argv[]){
 
     // Make a client and a server
     Client* client = new Client(IP, PORT);
-    // client->send("Hello from client script");
-    client->send("This is a good message service");
+    client->send("Hello from client script");
+    // client->send("This is a good message service\n");
     delete client;
 
     return 0;
