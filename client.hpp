@@ -5,14 +5,11 @@
 
 
 class Client : public TCPnode {
-private:
-    double private_key = 13;
-
 public:
     Client(char *IP, int PORT);
     ~Client();
 
-    double public_key = 11;
+    double public_key = 13;
     const char *myName();
 };
 

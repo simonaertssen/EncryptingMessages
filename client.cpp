@@ -26,7 +26,10 @@ Client::Client(char *IP, int PORT) : TCPnode(IP, PORT){
 
     if (connected == 0) {
       shutdownSafely();
-  }
+    }
+
+    // Set private and public keys:
+    p = 11, q = 13, n = p*q, e = 3, tot, d;
 }
 
 
@@ -59,13 +62,16 @@ int main(int argc, char *argv[]){
     client->send(client->myFD, "Request encryption");
 
     // Get the server's public key:
-    // char *message = client->receive(server->yoFD);
-    //
-    // double prime = atof(message);
+    char *message = client->receive(server->yoFD);
+    double server_n = atof(message);
 
-    char *message = client->receive(client->myFD);
-    std::cout << "MSG (" << strlen(message) << "): ";
-    std::cout << message << std::endl;
+    message = client->receive(server->yoFD);
+    double server_e = atof(message);
+
+
+    // char *message = client->receive(client->myFD);
+    // std::cout << "MSG (" << strlen(message) << "): ";
+    // std::cout << message << std::endl;
 
     delete client;
     return 0;

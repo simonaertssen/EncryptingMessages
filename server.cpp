@@ -57,6 +57,8 @@ int main(int argc, char *argv[]){
 
     // Make a server and receive some messages:
     Server *server = new Server(IP, PORT);
+
+    // Receive an encrypted message from the client:
     char *message = server->receive(server->yoFD);
     std::cout << message << std::endl;
 

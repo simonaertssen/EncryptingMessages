@@ -18,6 +18,8 @@ class TCPnode {
         int ADL;
         char *msg_buffer = new char[BUFFER_SIZE];
 
+        double p, q, n, e, tot, d;
+
         virtual const char *myName();
         void shutdownSafely();
 
